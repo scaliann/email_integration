@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список сообщений</title>
+    <style>
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список сообщений</h1>
+
+    <!-- Таблица сообщений -->
+    <table>
+        <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Дата отправки</th>
+                <th>Содержание</th>
+            </tr>
+        </thead>
+        <tbody id="message-list">
+            <!-- Сообщения будут добавлены через JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Функция для загрузки сообщений через API
+        function loadMessages() {
+            fetch('/message/')
+                .then(response => response.json())
+                .then(data => {
+                    const messageList = document.getElementById("message-list");
+                    messageList.innerHTML = "";  // Очистка списка сообщений
+
+                    data.forEach(message => {
+                        const row = `
+                            <tr>
+                                <td>${message.subject}</td>
+                                <td>${new Date(message.sent_date).toLocaleString()}</td>
+                                <td>${message.body.substring(0, 100)}...</td>
+                            </tr>
+                        `;
+                        messageList.insertAdjacentHTML("beforeend", row);
+                    });
+                })
+                .catch(error => console.error("Ошибка загрузки сообщений:", error));
+        }
+
+        // Загружаем сообщения при загрузке страницы
+        document.addEventListener("DOMContentLoaded", loadMessages);
+    </script>
+</body>
+</html>
